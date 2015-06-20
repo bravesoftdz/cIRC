@@ -1,0 +1,16 @@
+program cIRC;
+
+uses
+  Forms,
+  Main in 'Main.pas' {FormMain},
+  Utils in 'Utils.pas',
+  cIRC_Data in 'cIRC_Data.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.Title := 'cIRC';
+  Application.CreateForm(TFormMain, FormMain);
+  Application.Run;
+end.
