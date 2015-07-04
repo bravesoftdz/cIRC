@@ -60,8 +60,8 @@ type
     FParams: string;
     FPrefix: string;
     FServer: string;
-    FTimeStamp: TDateTime;    FTrailing: string;    FUser: string;  public
-    constructor Create(const Data: string; const Server: TcIRC_Server);
+    FTimeStamp: TDateTime;    FTrailing: string;    FUser: string;    FValid: Boolean;  public
+    constructor Create(const Data: string);
   public
     property Command: string read FCommand;
     property Data: string read FData;
@@ -71,7 +71,7 @@ type
     property Params: string read FParams;
     property Prefix: string read FPrefix;
     property Server: string read FServer;
-    property TimeStamp: TDateTime read FTimeStamp;    property Trailing: string read FTrailing;    property User: string read FUser;  end;
+    property TimeStamp: TDateTime read FTimeStamp;    property Trailing: string read FTrailing;    property User: string read FUser;    property Valid: Boolean read FValid;  end;
 
   { TcIRC_MessageArray }
 
@@ -162,22 +162,67 @@ end;
 
 { TcIRC_Message }
 
-constructor TcIRC_Message.Create(const Data: string; const Server: TcIRC_Server);
+constructor TcIRC_Message.Create(const Data: string);
+var
+  S: string;
+  sub: string;
+  i: Integer;
 begin
+  FValid := False;
+  FTimeStamp := Now;
   FData := Data;
-  if Trim(Data) = '' then
+  S := Data;
+  // :<prefix> <command> <params> :<trailing>
+  // the only required part of the message is the command
+  // if there is no prefix, then the source of the message is the server for the current connection (such as for PING)
+  if Copy(Data, 1, 1) = ':' then
+  begin
+    i := Pos(' ', S);
+    if i > 0 then
+    begin
+      FPrefix := Copy(S, 2, i - 2);
+      ShowMessage('"' + FPrefix + '"');
+      S := Copy(S, i + 1, Length(S) - i);
+    end;
+  end;
+  i := Pos(' :', S);
+  if i > 0 then
+  begin
+    FTrailing := Copy(S, i + 2, Length(S) - i - 1);
+    S := Copy(S, 1, i - 1);
+  end;
+  i := Pos(' ', S);
+  if i > 0 then
+  begin
+    // params found
+    FParams := Copy(S, i + 1, Length(S) - i);
+    S := Copy(S, 1, i - 1);
+  end;
+  FCommand := S;
+  if FCommand = '' then
     Exit;
-
-    
-  {FCommand: string;
-
-  FDestination: string;
-  FHostname: string;
-  FNick: string;
-  FParams: string;
-  FPrefix: string;
-  FServer: string;
-  FTimeStamp: TDateTime;  FTrailing: string;  FUser: string;}
+  FValid := True;
+  if FPrefix <> '' then
+  begin
+    // prefix format: nick!user@hostname
+    i := Pos('!', FPrefix);
+    if i > 0 then
+    begin
+      FNick := Copy(FPrefix, 1, i - 1);
+      sub := Copy(FPrefix, i + 1, Length(FPrefix) - i);
+      i := Pos('@', sub);
+      if i > 0 then
+      begin
+        FUser := Copy(sub, 1, i - 1);
+        FHostname := Copy(sub, i + 1, Length(sub) - i);
+      end;
+    end
+    else
+      FNick := FPrefix;
+  end;
+  i := Pos(' ', FParams);
+  if i <= 0 then
+    FDestination := FParams;
 end;
 
 { TcIRC_MessageArray }
