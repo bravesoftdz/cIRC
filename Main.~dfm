@@ -73,7 +73,7 @@ object FormMain: TFormMain
       TabOrder = 0
     end
   end
-  object Panel4: TPanel
+  object PanelCentral: TPanel
     Left = 103
     Top = 0
     Width = 586
@@ -81,23 +81,6 @@ object FormMain: TFormMain
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 3
-    object MemoTraffic: TMemo
-      Left = 0
-      Top = 14
-      Width = 586
-      Height = 399
-      Align = alClient
-      Color = clBlack
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -11
-      Font.Name = 'Courier New'
-      Font.Style = []
-      ParentFont = False
-      ReadOnly = True
-      ScrollBars = ssVertical
-      TabOrder = 0
-    end
     object Panel5: TPanel
       Left = 0
       Top = 413
@@ -106,7 +89,7 @@ object FormMain: TFormMain
       Align = alBottom
       AutoSize = True
       BevelOuter = bvNone
-      TabOrder = 1
+      TabOrder = 0
       DesignSize = (
         586
         22)
@@ -137,7 +120,7 @@ object FormMain: TFormMain
       Height = 14
       Align = alTop
       BevelOuter = bvNone
-      TabOrder = 2
+      TabOrder = 1
       object Label2: TLabel
         Left = 0
         Top = 0
@@ -154,6 +137,22 @@ object FormMain: TFormMain
         Align = alRight
         Caption = 'Label3'
       end
+    end
+    object Memo1: TMemo
+      Left = 0
+      Top = 14
+      Width = 586
+      Height = 399
+      Align = alClient
+      Color = clBlack
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -11
+      Font.Name = 'Courier New'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 2
+      Visible = False
     end
   end
   object MainMenu: TMainMenu

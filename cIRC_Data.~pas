@@ -77,12 +77,13 @@ type
 
   TcIRC_MessageArray = class(TObject)
   private
-
+    FMessages: TList;
   public
     constructor Create;
     destructor Destroy; override;
   public
-
+    procedure Add(const Data: string);
+    procedure Clear;
   end;
 
   { TcIRC_Channel }
@@ -181,7 +182,6 @@ begin
     if i > 0 then
     begin
       FPrefix := Copy(S, 2, i - 2);
-      ShowMessage('"' + FPrefix + '"');
       S := Copy(S, i + 1, Length(S) - i);
     end;
   end;
@@ -227,14 +227,32 @@ end;
 
 { TcIRC_MessageArray }
 
+procedure TcIRC_MessageArray.Add(const Data: string);
+var
+  NewMessage: TcIRC_Message;
+begin
+  NewMessage := TcIRC_Message.Create(Data);
+  FMessages.Add(NewMessage);
+end;
+
+procedure TcIRC_MessageArray.Clear;
+var
+  i: Integer;
+begin
+  for i := 0 to Count - 1 do
+    Messages[i].Free;
+  FMessages.Clear;
+end;
+
 constructor TcIRC_MessageArray.Create;
 begin
-
+  FMessages := TList.Create;
 end;
 
 destructor TcIRC_MessageArray.Destroy;
 begin
-
+  Clear;
+  FMessages.Free;
   inherited;
 end;
 

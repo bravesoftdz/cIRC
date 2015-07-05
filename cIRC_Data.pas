@@ -77,12 +77,19 @@ type
 
   TcIRC_MessageArray = class(TObject)
   private
-
+    FMessages: TList;
+  private
+    function GetCount: Integer;
+    function GetMessage(const Index: Integer): TcIRC_Message;
   public
     constructor Create;
     destructor Destroy; override;
   public
-
+    procedure Add(const Data: string);
+    procedure Clear;
+  public
+    property Count: Integer read GetCount;
+    property Messages[const Index: Integer]: TcIRC_Message read GetMessage; default;
   end;
 
   { TcIRC_Channel }
@@ -226,15 +233,43 @@ end;
 
 { TcIRC_MessageArray }
 
+procedure TcIRC_MessageArray.Add(const Data: string);
+var
+  NewMessage: TcIRC_Message;
+begin
+  NewMessage := TcIRC_Message.Create(Data);
+  FMessages.Add(NewMessage);
+end;
+
+procedure TcIRC_MessageArray.Clear;
+var
+  i: Integer;
+begin
+  for i := 0 to Count - 1 do
+    Messages[i].Free;
+  FMessages.Clear;
+end;
+
 constructor TcIRC_MessageArray.Create;
 begin
-
+  FMessages := TList.Create;
 end;
 
 destructor TcIRC_MessageArray.Destroy;
 begin
-
+  Clear;
+  FMessages.Free;
   inherited;
+end;
+
+function TcIRC_MessageArray.GetCount: Integer;
+begin
+  Result := FMessages.Count;
+end;
+
+function TcIRC_MessageArray.GetMessage(const Index: Integer): TcIRC_Message;
+begin
+  Result := FMessages[Index];
 end;
 
 { TcIRC_Channel }
